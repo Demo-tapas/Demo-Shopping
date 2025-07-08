@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taste of Nabadwip</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+    }
+    header {
+      background: #f1c40f; /*linear-gradient(to right, #f1c40f, #000); */
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+    }
+    .logo-text span {
+      display: block;
+      font-size: 22px;
+      font-weight: bold;
+      color: black;
+    }
+    .hamburger {
+      font-size: 28px;
+      cursor: pointer;
+      color: black;
+    }
+    .dropdown {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: #222;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    .dropdown a {
+      padding: 15px 20px;
+      color: #f1c40f;
+      text-decoration: none;
+      border-bottom: 1px solid #444;
+    }
+    .dropdown a:hover {
+      background: #333;
+    }
+    .hero {
+      background: url('https://source.unsplash.com/1600x600/?restaurant,food') center/cover no-repeat;
+      text-align: center;
+      padding: 25px 20px;
+      font-size: 34px;
+      color: #fff;
+      font-weight: bold;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      gap: 10px;
+    }
+    .search-bar input {
+      padding: 10px;
+      width: 60%;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
+    }
+    .search-bar button {
+      padding: 10px 20px;
+      background: #f1c40f;
+      border: none;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .categories {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .categories button {
+      background: transparent;
+      color: #f1c40f;
+      border: 2px solid #f1c40f;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    .categories button:hover {
+      background: #f1c40f;
+      color: #000;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .product {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .product h3 {
+      margin: 10px 0;
+      color: #f1c40f;
+    }
+    .product p { font-size: 14px; color: #ccc; }
+    .price {
+      font-weight: bold;
+      color: #27ae60;
+      margin-top: 5px;
+    }
+    .buy-btn {
+      background: #27ae60;
+      color: #000;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .pagination button {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      margin: 0 4px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .pagination button.active {
+      background: #f1c40f;
+      color: #000;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      color: #aaa;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-text">
+      <span style="font-size:28px;">Taste of Nabadwip</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <div class="dropdown" id="menu">
+      <a href="#">Free Delivery</a>
+      <a href="#">COD</a>
+      <a href="#productList">Shop</a>
+    </div>
+  </header>
+  <div class="hero">Delicious Food Delivered to Your Door</div>
+  <p style="text-align: center;">eat our food</p>
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search food...">
+      <button onclick="searchProducts()">Search</button>
+    </div>
+    <div class="categories" id="categoryBtns"></div>
+    <div class="products" id="productList"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+  <footer>
+    Made with ❤ in Nabadwip &copy; 2025
+  </footer>
+
+  <script>
+    const allProducts = [
+      { name: 'Paneer Butter Masala', price: '₹160', category: 'Veg', desc: 'Rich paneer curry with cream', img: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/ojl2otthjfdftvkeynjw' },
+      { name: 'Chicken Biryani', price: '₹220', category: 'Non-Veg', desc: 'Authentic Hyderabadi biryani', img: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_366/1a8dfa8b2a73ddf7c6193465ab24c898' },
+      { name: 'Cold Coffee', price: '₹60', category: 'Drinks', desc: 'Chilled creamy coffee drink', img: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/cuti5rzsk7htl3xc6rpr' },
+      { name: 'Butter Naan', price: '₹30', category: 'Veg', desc: 'Soft naan with butter topping', img: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/lwyc47xlakof2cpctrfi' },
+      { name: 'Mutton Curry', price: '₹280', category: 'Non-Veg', desc: 'Slow-cooked spicy mutton', img: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/jixudsdysmd3s9rpn8zv' }
+    ];
+    const categories = ['All', 'Veg', 'Non-Veg', 'Drinks'];
+    const perPage = 3;
+    let currentPage = 1;
+    let filteredProducts = allProducts;
+
+    function renderCategories() {
+      const container = document.getElementById('categoryBtns');
+      container.innerHTML = categories.map(cat => `<button onclick="filterByCategory('${cat}')">${cat}</button>`).join('');
+    }
+
+    function renderProducts() {
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+      const paginated = filteredProducts.slice(start, end);
+      const container = document.getElementById('productList');
+      container.innerHTML = paginated.map(p => `
+        <div class="product">
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <p class="price">${p.price}</p>
+          <button class="buy-btn">Order Now</button>
+        </div>`).join('');
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const pages = Math.ceil(filteredProducts.length / perPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+      for (let i = 1; i <= pages; i++) {
+        const btn = document.createElement('button');
+        btn.innerText = i;
+        btn.className = (i === currentPage) ? 'active' : '';
+        btn.onclick = () => { currentPage = i; renderProducts(); };
+        pagination.appendChild(btn);
+      }
+    }
+
+    function filterByCategory(cat) {
+      currentPage = 1;
+      filteredProducts = (cat === 'All') ? allProducts : allProducts.filter(p => p.category === cat);
+      renderProducts();
+    }
+
+    function searchProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(query));
+      currentPage = 1;
+      renderProducts();
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'flex';
+    }
+
+    renderCategories();
+    renderProducts();
+  </script>
+</body>
+</html>
